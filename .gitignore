@@ -1,0 +1,19 @@
+# Python virtual environment
+venv/
+
+# Hugging Face model cache
+hf_cache/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env
+
+# Operating system files
+.DS_Store
+Thumbs.db
