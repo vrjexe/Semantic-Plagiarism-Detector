@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Semantic Plagiarism Detector</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e6eaf0;
+        }
+
+        .header-inner {
+            max-width: 1250px;
+            margin: auto;
+            padding: 28px 30px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+
+            border-radius: 13px;
+
+            background: #2563eb;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .brand h1 {
+            font-size: 23px;
+            margin-bottom: 3px;
+        }
+
+        .brand p {
+            color: #718096;
+            font-size: 13px;
+        }
+
+        .project-badge {
+            padding: 8px 14px;
+
+            background: #eef4ff;
+            color: #2563eb;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* MAIN */
+
+        .container {
+            max-width: 1250px;
+
+            margin: auto;
+
+            padding: 35px 30px 45px;
+        }
+
+        .intro {
+            margin-bottom: 25px;
+        }
+
+        .intro h2 {
+            font-size: 25px;
+            margin-bottom: 7px;
+        }
+
+        .intro p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        /* INPUT GRID */
+
+        .input-grid {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 22px;
+        }
+
+        .card {
+            background: white;
+
+            border: 1px solid #e4e8ef;
+
+            border-radius: 16px;
+
+            padding: 21px;
+
+            box-shadow:
+                0 7px 25px rgba(31, 41, 55, .045);
+        }
+
+        .card-header {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .card-number {
+            width: 28px;
+            height: 28px;
+
+            border-radius: 8px;
+
+            background: #eef4ff;
+            color: #2563eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* TEXTAREA */
+
+        textarea {
+            width: 100%;
+
+            height: 210px;
+
+            resize: vertical;
+
+            border: 1px solid #dce2ea;
+
+            border-radius: 11px;
+
+            padding: 15px;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+            color: #263246;
+
+            outline: none;
+
+            background: #fbfcfe;
+        }
+
+        textarea:focus {
+            background: white;
+
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 3px rgba(37, 99, 235, .08);
+        }
+
+        textarea::placeholder {
+            color: #a0a9b8;
+        }
+
+        /* FILE UPLOAD */
+
+        .upload-area {
+            margin-top: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            padding: 10px 12px;
+
+            background: #f8fafc;
+
+            border: 1px dashed #cfd6e1;
+
+            border-radius: 10px;
+        }
+
+        .upload-text {
+            font-size: 12px;
+
+            color: #7a8494;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+        }
+
+        .upload-button {
+            background: #eef4ff;
+
+            color: #2563eb;
+
+            border: 1px solid #d8e5ff;
+
+            padding: 8px 13px;
+
+            border-radius: 8px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+        }
+
+        .upload-button:hover {
+            background: #e2ecff;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* TEXT INFO */
+
+        .text-info {
+            margin-top: 10px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            color: #8a94a4;
+
+            font-size: 12px;
+        }
+
+        /* BUTTONS */
+
+        .actions {
+            display: flex;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            margin: 25px 0;
+        }
+
+        button {
+            border: none;
+
+            cursor: pointer;
+
+            font-family: inherit;
+
+            font-weight: 700;
+
+            font-size: 14px;
+
+            border-radius: 10px;
+
+            padding: 12px 24px;
+        }
+
+        .analyze {
+            background: #2563eb;
+
+            color: white;
+
+            min-width: 190px;
+
+            box-shadow:
+                0 5px 14px rgba(37, 99, 235, .2);
+        }
+
+        .analyze:hover {
+            background: #1d4ed8;
+        }
+
+        .clear {
+            background: white;
+
+            color: #4b5563;
+
+            border: 1px solid #dce2ea;
+        }
+
+        .clear:hover {
+            background: #f8fafc;
+        }
+
+        /* LOADING */
+
+        .loading {
+            display: none;
+
+            text-align: center;
+
+            color: #2563eb;
+
+            font-size: 13px;
+
+            margin-top: 12px;
+        }
+
+        /* RESULT */
+
+        .result-card {
+            background: white;
+
+            border: 1px solid #e4e8ef;
+
+            border-radius: 16px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 7px 25px rgba(31, 41, 55, .045);
+
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 12px;
+
+            font-weight: 700;
+
+            letter-spacing: 1.2px;
+
+            text-transform: uppercase;
+
+            color: #8993a3;
+
+            margin-bottom: 7px;
+        }
+
+        .score {
+            font-size: 52px;
+
+            line-height: 1.1;
+
+            font-weight: 800;
+
+            color: #2563eb;
+
+            margin-bottom: 18px;
+        }
+
+        .meter {
+            max-width: 750px;
+
+            margin: auto;
+        }
+
+        .meter-track {
+            width: 100%;
+
+            height: 12px;
+
+            border-radius: 20px;
+
+            background: #e9edf3;
+
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            width: 0%;
+
+            height: 100%;
+
+            border-radius: 20px;
+
+            background: #2563eb;
+
+            transition: width .7s ease;
+        }
+
+        .classification {
+            margin-top: 18px;
+
+            font-size: 17px;
+
+            font-weight: 750;
+
+            color: #263246;
+        }
+
+        .description {
+            margin-top: 7px;
+
+            color: #7a8494;
+
+            font-size: 13px;
+        }
+
+        /* INFO */
+
+        .info-box {
+            margin-top: 18px;
+
+            padding: 14px 17px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e6eaf0;
+
+            border-radius: 11px;
+
+            color: #697386;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+
+            text-align: left;
+        }
+
+        .info-box strong {
+            color: #4b5563;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+
+            padding: 5px 25px 25px;
+
+            color: #9aa3b2;
+
+            font-size: 12px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 850px) {
+
+            .header-inner {
+                padding: 22px;
+            }
+
+            .project-badge {
+                display: none;
+            }
+
+            .container {
+                padding: 25px 18px 35px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            textarea {
+                height: 190px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .brand h1 {
+                font-size: 18px;
+            }
+
+            .brand p {
+                font-size: 11px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .analyze,
+            .clear {
+                width: 100%;
+            }
+
+            .upload-area {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .upload-button {
+                text-align: center;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                NLP
+            </div>
+
+            <div>
+
+                <h1>
+                    Semantic Plagiarism Detector
+                </h1>
+
+                <p>
+                    NLP-based semantic similarity and paraphrase analysis
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="project-badge">
+            AI / NLP PROJECT
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+    <div class="intro">
+
+        <h2>
+            Compare Two Documents
+        </h2>
+
+        <p>
+            Upload documents or enter text manually to calculate semantic similarity.
+        </p>
+
+    </div>
+
+
+
+    <section class="input-grid">
+
+
+        <!-- ORIGINAL -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="card-title">
+                    Original Text
+                </div>
+
+                <div class="card-number">
+                    01
+                </div>
+
+            </div>
+
+
+            <textarea
+                id="text1"
+                placeholder="Paste the original text here..."
+                oninput="updateCount('text1','count1')"
+            ></textarea>
+
+
+            <div class="upload-area">
+
+                <span
+                    id="fileName1"
+                    class="upload-text"
+                >
+                    Supported: TXT, PDF, DOCX
+                </span>
+
+
+                <label
+                    for="file1"
+                    class="upload-button"
+                >
+                    Upload File
+                </label>
+
+                <input
+                    type="file"
+                    id="file1"
+                    accept=".txt,.pdf,.docx"
+                    onchange="uploadFile('file1','text1','fileName1')"
+                >
+
+            </div>
+
+
+            <div class="text-info">
+
+                <span>
+                    Source content
+                </span>
+
+                <span id="count1">
+                    0 characters
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SUBMITTED -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="card-title">
+                    Submitted / Paraphrased Text
+                </div>
+
+                <div class="card-number">
+                    02
+                </div>
+
+            </div>
+
+
+            <textarea
+                id="text2"
+                placeholder="Paste the submitted or paraphrased text here..."
+                oninput="updateCount('text2','count2')"
+            ></textarea>
+
+
+            <div class="upload-area">
+
+                <span
+                    id="fileName2"
+                    class="upload-text"
+                >
+                    Supported: TXT, PDF, DOCX
+                </span>
+
+
+                <label
+                    for="file2"
+                    class="upload-button"
+                >
+                    Upload File
+                </label>
+
+                <input
+                    type="file"
+                    id="file2"
+                    accept=".txt,.pdf,.docx"
+                    onchange="uploadFile('file2','text2','fileName2')"
+                >
+
+            </div>
+
+
+            <div class="text-info">
+
+                <span>
+                    Comparison content
+                </span>
+
+                <span id="count2">
+                    0 characters
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <div class="actions">
+
+        <button
+            class="analyze"
+            onclick="analyzeSimilarity()"
+        >
+            Analyze Similarity
+        </button>
+
+        <button
+            class="clear"
+            onclick="clearAll()"
+        >
+            Clear
+        </button>
+
+    </div>
+
+
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        Processing document...
+    </div>
+
+
+
+    <section class="result-card">
+
+        <div class="result-label">
+            Semantic Similarity Score
+        </div>
+
+
+        <div
+            id="score"
+            class="score"
+        >
+            --%
+        </div>
+
+
+        <div class="meter">
+
+            <div class="meter-track">
+
+                <div
+                    id="progressFill"
+                    class="meter-fill"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="classification"
+            class="classification"
+        >
+            Ready for analysis
+        </div>
+
+
+        <div
+            id="description"
+            class="description"
+        >
+            Enter text or upload two documents to begin.
+        </div>
+
+
+        <div class="info-box">
+
+            <strong>Note:</strong>
+
+            Semantic similarity measures how closely the meanings
+            of two texts are related. A high similarity score may
+            indicate paraphrasing or overlapping content, but the
+            score alone is not proof of plagiarism.
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<footer>
+
+    Semantic Plagiarism & Paraphrase Detection
+    &nbsp;•&nbsp;
+    NLP-Based Academic Project
+
+</footer>
+
+
+
+<script>
+
+
+/* ================= CHARACTER COUNT ================= */
+
+
+function updateCount(textId, countId) {
+
+    const text =
+        document.getElementById(textId).value;
+
+    document.getElementById(countId).textContent =
+        text.length + " characters";
+
+}
+
+
+
+/* ================= FILE UPLOAD ================= */
+
+
+async function uploadFile(
+    fileInputId,
+    textAreaId,
+    fileNameId
+) {
+
+    const fileInput =
+        document.getElementById(fileInputId);
+
+    const file =
+        fileInput.files[0];
+
+
+    if (!file) {
+
+        return;
+
+    }
+
+
+    const fileName =
+        document.getElementById(fileNameId);
+
+    const textArea =
+        document.getElementById(textAreaId);
+
+
+    fileName.textContent =
+        "Reading " + file.name + "...";
+
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "file",
+        file
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.error ||
+                "Unable to read the file."
+            );
+
+            fileName.textContent =
+                "Supported: TXT, PDF, DOCX";
+
+            return;
+        }
+
+
+        textArea.value =
+            data.text;
+
+
+        fileName.textContent =
+            "✓ " + data.filename;
+
+
+        const countId =
+            textAreaId === "text1"
+                ? "count1"
+                : "count2";
+
+
+        updateCount(
+            textAreaId,
+            countId
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to connect to the server."
+        );
+
+        fileName.textContent =
+            "Supported: TXT, PDF, DOCX";
+    }
+
+}
+
+
+
+/* ================= ANALYSIS ================= */
+
+
+async function analyzeSimilarity() {
+
+    const text1 =
+        document.getElementById("text1").value.trim();
+
+    const text2 =
+        document.getElementById("text2").value.trim();
+
+
+    const loading =
+        document.getElementById("loading");
+
+    const scoreElement =
+        document.getElementById("score");
+
+    const progressFill =
+        document.getElementById("progressFill");
+
+    const classification =
+        document.getElementById("classification");
+
+    const description =
+        document.getElementById("description");
+
+
+    if (!text1 || !text2) {
+
+        alert(
+            "Please enter text or upload a document in both boxes."
+        );
+
+        return;
+    }
+
+
+    loading.textContent =
+        "Analyzing semantic similarity...";
+
+    loading.style.display =
+        "block";
+
+
+    classification.textContent =
+        "Analyzing...";
+
+
+    description.textContent =
+        "The NLP model is comparing the semantic meaning of both texts.";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/analyze",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        text1: text1,
+                        text2: text2
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.error ||
+                "Analysis failed."
+            );
+
+            return;
+        }
+
+
+        const score =
+            Number(data.score);
+
+
+        scoreElement.textContent =
+            score.toFixed(2) + "%";
+
+
+        progressFill.style.width =
+            Math.max(
+                0,
+                Math.min(score, 100)
+            ) + "%";
+
+
+        if (score >= 85) {
+
+            classification.textContent =
+                "VERY HIGH SEMANTIC SIMILARITY";
+
+            description.textContent =
+                "The two texts have a very high degree of semantic similarity.";
+
+        }
+
+        else if (score >= 70) {
+
+            classification.textContent =
+                "HIGH SEMANTIC SIMILARITY";
+
+            description.textContent =
+                "The two texts convey highly similar meanings.";
+
+        }
+
+        else if (score >= 40) {
+
+            classification.textContent =
+                "MODERATE SEMANTIC SIMILARITY";
+
+            description.textContent =
+                "The two texts share a moderate level of semantic similarity.";
+
+        }
+
+        else {
+
+            classification.textContent =
+                "LOW SEMANTIC SIMILARITY";
+
+            description.textContent =
+                "The two texts have relatively different meanings.";
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to connect to the Flask server."
+        );
+
+    }
+
+    finally {
+
+        loading.style.display =
+            "none";
+
+    }
+
+}
+
+
+
+/* ================= CLEAR ================= */
+
+
+function clearAll() {
+
+    document.getElementById("text1").value =
+        "";
+
+    document.getElementById("text2").value =
+        "";
+
+
+    document.getElementById("file1").value =
+        "";
+
+    document.getElementById("file2").value =
+        "";
+
+
+    document.getElementById("fileName1").textContent =
+        "Supported: TXT, PDF, DOCX";
+
+    document.getElementById("fileName2").textContent =
+        "Supported: TXT, PDF, DOCX";
+
+
+    document.getElementById("count1").textContent =
+        "0 characters";
+
+    document.getElementById("count2").textContent =
+        "0 characters";
+
+
+    document.getElementById("score").textContent =
+        "--%";
+
+
+    document.getElementById("progressFill").style.width =
+        "0%";
+
+
+    document.getElementById("classification").textContent =
+        "Ready for analysis";
+
+
+    document.getElementById("description").textContent =
+        "Enter text or upload two documents to begin.";
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
